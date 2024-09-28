@@ -1,7 +1,7 @@
-OBJS	= program.o
-SOURCE	= program.c
+OBJS	= lbp.o
+SOURCE	= lbp.c
 # HEADER	= library.h
-OUT	= program
+OUT	= LBP
 CC	 = gcc
 FLAGS	 = -g -c -Wall -Wextra -Werror
 LFLAGS	 = -lm
@@ -9,8 +9,8 @@ LFLAGS	 = -lm
 all: $(OBJS)
 	$(CC) -g $(OBJS) -o $(OUT) $(LFLAGS)
 
-program.o: program.c
-	$(CC) $(FLAGS) program.c 
+lbp.o: lbp.c
+	$(CC) $(FLAGS) lbp.c 
 
 clean:
 	rm -f *.o *.gch $(OUT)
