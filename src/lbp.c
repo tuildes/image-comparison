@@ -3,22 +3,41 @@
 unsigned char** pgm_image_to_matrix(FILE *arc, size_t *width, size_t *height) {
 
     unsigned char** m; // Matriz a ser retornada
+    char *res;
     char typeP[5], line[256]; // Tipo da imagem (P2 ou P5)
     short unsigned int n, max, counter = 0;
 
     // Ler a atual linha e remover comentarios
     while(counter < 3) {
-        fgets(line, 255, arc);
-        if (line[0] == '#') continue; // Remover comentarios
+        res = fgets(line, 255, arc);
+        if (res == NULL) return NULL;
+        if (line[0] == '#') continue; // Remover comentario
 
         counter++;
         // Fazer a leitura de TIPO, LARGURA, ALTURA e VALOR MAXIMO
         switch(counter) {
-            case 1: { sscanf(line, "%s", typeP); break; }
-            case 2: { sscanf(line, "%lu %lu", width, height); break; }
-            case 3: { sscanf(line, "%hu", &max); break; }
+            case 1: { 
+                if (!sscanf(line, "%s", typeP))
+                    return NULL;
+                break;  
+            }
+            case 2: { 
+                if (!sscanf(line, "%lu %lu", width, height))
+                    return NULL;
+                break; 
+            }
+            case 3: { 
+                if (!sscanf(line, "%hu", &max))
+                    return NULL;
+                break; 
+            }
             default: break;
         }
+    }
+
+    if( (!*height) || (!width) || (!arc) || 
+        (*height < 3) || (*width < 3)) {
+        return NULL;
     }
 
     m = (unsigned char **) malloc (sizeof(unsigned char *) * (*height));
@@ -41,8 +60,10 @@ unsigned char** pgm_image_to_matrix(FILE *arc, size_t *width, size_t *height) {
         for(size_t i = 0; i < (*height); i++) fread(m[i], sizeof(unsigned char), (*width), arc);
 
     } else { // Caso FALHA (fallback)
-        for(size_t i = 0; i < (*height); i++) free(m[i]);
-        return NULL;
+        for(size_t i = 0; i < (*height); i++) { 
+            free(m[i]); 
+            return NULL; 
+        }
     }
 
     return m;
@@ -182,9 +203,21 @@ int verify_histogram_archive(char *name) {
 
 char* concat_pgm(char *name) {
     char* aux;
+    size_t dot = 0;
+    for(size_t i = strlen(name); i > 0; i--) {
+        if (name[i] == '.') {
+            dot = i;
+            break;
+        }
+    }
+
+    if (dot == 0) return NULL;
+
     if ((aux = (char *)malloc(sizeof(char) * (strlen(name) + 5))) == NULL) 
         return NULL; // ERRO
+    
     strcpy(aux, name);
+    aux[dot] = '\0';
     strcat(aux, ".lbp");
     return aux;
 }

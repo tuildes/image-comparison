@@ -21,4 +21,6 @@ int options_manual();
 // Destroir matrizes de qualquer natureza
 void destroy_matrix(unsigned char **n, size_t l);
 
+char* prepare_location_image(char *dir, char *name);
+
 #endif // __AUXILIAR_H__
