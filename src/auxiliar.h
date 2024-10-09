@@ -3,6 +3,7 @@
 #include <math.h>
 #include <unistd.h>
 #include <string.h>
+#include <dirent.h> 
 
 #ifndef __AUXILIAR_H__
 #define __AUXILIAR_H__
@@ -11,7 +12,7 @@
 #define EXIT_SUCCESS 0
 
 // Retorna a DISTANCIA EUCLIDIANA entre dois vetores de tamanho LENGHT
-double euclidian_distance(int *v1, int *v2, size_t lenght);
+double euclidian_distance(unsigned int *v1, unsigned int *v2);
 
 // Imprime o manual de OPCOES do software
 // Retorna 1

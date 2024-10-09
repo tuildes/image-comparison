@@ -1,23 +1,3 @@
-// -i input
-// -d directory base com as imagens
-
-// Deve aceitar PGM ASCII e BINARIO
-// FORMATO P2 E P5
-
-// Entry ./lbp -d ./base -i img1.tif
-// Exit: <img mais similar> <distance>
-
-// <img> nome do arquivo com a extensao
-// distance => %6.lf
-
-// IMAGEM LBP => imagem.ext => imagem.lbp
-// Arquivo binario
-
-// Caso 2.
-// ./lbp -i img1.tif -o img_out.tif
-// Gera a imagem LBP com o nome informado
-// SEM SAIDAS
-// Erros => nao criar a imagem
 #include "lbp.h"
 #include "auxiliar.h"
 
@@ -25,24 +5,22 @@ int main (int argc, char *argv[]) {
 
     // Arquivos de ENTRADA
     FILE *original;
-    char *originalPath, *outputPath;
-    short unsigned int max;
+    char *originalPath = NULL, *outputPath = NULL, *compDir = NULL;
     size_t width, height;
 
     // Matrizes/arquivos de manipulacao
-    unsigned char **result, **old;
-    unsigned char maxNew;
+    unsigned char **result = NULL, **old = NULL;
     
     char option; // Opcao das entradas
     unsigned int mode = 0; // Modo de operacao
    
     // Verifica opcoes de entrada
-    if ((argc + 1) % 2) { // Numero de entradas errada
+    if (((argc + 1) % 2) || (argc == 1)) { // Numero de entradas errada
         options_manual();
         return 1;
     }
 
-    while ((option = getopt(argc, argv, "i:o:")) != -1) {
+    while ((option = getopt(argc, argv, "i:o:d:")) != -1) {
         switch (option) {
             case 'i': // Tipo input
                 originalPath = strdup(optarg);
@@ -52,7 +30,8 @@ int main (int argc, char *argv[]) {
                 mode = 1; // Modo de output
                 break;
             case 'd':
-                mode = 0; // 2
+                compDir = strdup(optarg);
+                mode = 2; // Modo de comparacao
                 break;
             default: // Entradas erradas
                 printf("\n");
@@ -61,8 +40,11 @@ int main (int argc, char *argv[]) {
         }
     }
 
-    if ((argc + 1) % 2) { // Numero de entradas errada
+    if (!originalPath) { // Sem input
         options_manual();
+
+        free(originalPath);
+        free(outputPath);
         return 1;
     }
 
@@ -84,38 +66,116 @@ int main (int argc, char *argv[]) {
         // APENAS GERA A SAIDA
         case 1: {
             FILE *lbpOutput = fopen(outputPath, "w");
+            unsigned char maxPixel;
+
             if(lbpOutput == NULL) { // Erro ao criar arquivo DESTINO
-                printf("Não foi possível criar arquivo de saida (%s)\n", outputPath);
+                printf("Não foi possível criar arquivo de saida (%s)\n", 
+                        outputPath);
                 perror("Erro");
                 return EXIT_FAILURE;
             }
 
-            result = create_matrix_lbp(width, height); 
-
-            // Cria uma MATRIZ LBP
-            create_lbp_pattern(width, height, &maxNew, result, old);
+            // Cria a MATRIZ seguindo o LBP pela imagem OLD
+            result = create_lbp_matrix(width, height, &maxPixel, result, old);
 
             // Cria o arquivo com base na MATRIZ LBP
-            create_pgm_image(width, height, maxNew, result, lbpOutput);
+            create_pgm_image(width, height, maxPixel, result, lbpOutput);
 
             // Destruir a matrix e fechar arquivo de output
             fclose(lbpOutput);
             destroy_matrix(result, height);
             break;
         }
-        
+
+        case 2: {
+            char *lbpArchive, *lbpArchiveComp, *compArchive; // *mostNear;
+            // double temp, mostNearValue;
+            unsigned char maxPixel, **compMatrix;
+            FILE *a, *b, *originalComp;
+            unsigned int *v1, *v2;
+            int aux;
+
+            compArchive = "inputs/Apuleia1.pgm";
+
+            // Preparar nome do arquivo de origem
+            lbpArchive = concat_pgm(originalPath);
+            lbpArchiveComp = concat_pgm(compArchive);
+
+            // Ler arquivos do diretorio
+            DIR *d = opendir(compDir);
+
+            if (d == NULL) { return 1; } // Fazer frees aqui
+
+            struct dirent *dir;
+            while((dir = readdir(d)) != NULL) {
+                if (dir->d_type == DT_REG)
+                    printf("%s/%s\n", compDir, dir->d_name);
+                // Verificar extensoes do arquivo
+            }
+
+            free(d);
+
+            // Verificar se existe o arquivo atual LBP
+            aux = verify_histogram_archive(originalPath);
+            if (aux == 1) {
+
+                result = create_lbp_matrix(width, height, &maxPixel, result, old);
+                create_histogram_archive(width, height, result, lbpArchive);
+
+                destroy_matrix(result, height);
+            }
+
+            // Verificar se estive o LBP de COMPARACAO
+            aux = verify_histogram_archive(compArchive);
+            if (aux == 1) {
+
+                originalComp = fopen(compArchive, "r");
+                if (originalComp == NULL) {
+                    // Fazrr frees aqui
+                    return 1;
+                }
+
+                compMatrix = pgm_image_to_matrix(originalComp, &width, &height);
+
+                result = create_lbp_matrix(width, height, &maxPixel, result, compMatrix);
+                create_histogram_archive(width, height, result, lbpArchiveComp);
+
+                destroy_matrix(result, height);
+                destroy_matrix(compMatrix, height);
+                fclose(originalComp);
+            }
+
+            // Arquivo de origem
+            a = fopen(lbpArchive, "r");
+            v1 = histogram_file_to_vector(a);
+
+            // Arquivo de comparacao
+            b = fopen(lbpArchiveComp, "r");
+            v2 = histogram_file_to_vector(b);
+
+            // Finalizacao
+            printf("Imagem mais similar: %s, %s %.06lf\n", compArchive, 
+                                        lbpArchive, euclidian_distance(v1, v2));
+
+            free(v1);
+            free(v2);
+            free(lbpArchive);
+            free(lbpArchiveComp);
+            fclose(a);
+            fclose(b);
+
+            break;
+        }
+
         default:
             options_manual();
     }
 
-    // Criar histograma
-    // create_histogram_archive(width, height, result, "result.lbp");
-
     destroy_matrix(old, height);
-
     fclose(original);
     free(originalPath);
     free(outputPath);
+    free(compDir);
 
     return EXIT_SUCCESS;
 }
