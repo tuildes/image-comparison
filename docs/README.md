@@ -1,36 +1,27 @@
+<!-- HEADER -->
 <p align="center">
-  <img alt="Logo da linguagem C" src="https://miro.medium.com/v2/resize:fit:1390/0*KBAC5BL8fOeRdeAR.png" height="120">
-  <h3 align="center">Treinos em C</h3>
-  <p align="center">Uma série de desafios, algoritmos, treinamentos na linguagem C durante meu curso de <strong>IBM</strong></p>
-  <p align="center">
-    <img src="https://img.shields.io/github/languages/count/tuildes/tasks-in-c" />
-    <img src="https://img.shields.io/github/languages/code-size/tuildes/tasks-in-c" />
-  </p>
+  <img alt="Image in picture" src="https://raw.githubusercontent.com/tabler/tabler-icons/8d4f23166d708b42bacc5ce4bc73d72ba296057b/icons/outline/image-in-picture.svg" height="120">
+  <h3 align="center">LBP Image Comparison</h3>
+  <p align="center">Algoritmo de geração imagem e comparação de PGM usando LBP</p>
 </p>
+<!-- HEADER -->
 
 ## Sobre
-Este projeto possui uma série de algoritmo de treino na linguagem C.
 
-Possui um diretório ```project-base/``` e um script ```clone_project.sh``` para a criação de templates na linguagem C
-Este template possui um **makefile**  e um arquivo **program.c**, seguindo os padrões:
+O projeto **LBP IMAGE COMPARISON** é um software feito na linguagem `Clang`, proposto para comparações entre um banco de dados PGM (P2 ou P5) e uma outra imagem PGM. Além de possibilitar também apenas a criação de uma imagem LBP utilizando o tratamento por LBP (Local Binary Pattern).
 
-| **TIPO**     	| **PADRÃO**  	    |
-| -----------------	| ----------------  |
-| MACRO     	      | MACRO_NAME      	|
-| FUNCOES           | function_name()  	|
-| FUNCOES INDIRETAS | _function_name() 	|
-| VARIAVEIS         | variableName     	|
-| STRUCTS           | StructName       	|
+## Funcionalidades
 
-## Tecnologias
-- C
-- **Source**: [BeeCrowd](https://judge.beecrowd.com/pt)
-- **Source**: [CodeWars](https://codewars.com/)
+### Modo 01 (criação de imagem por LBP)
 
-## Algoritmos especiais
+* Com base numa imagem PGM original, o algoritmo cria um segundo arquivo PGM ao tratar o arquivo original utilizando LBP
+* **Entrada**: imagem.pgm base
+* **Saída (STDIN)**: nenhuma
+* **Saída**: criação de um arquivo output.pgm com nome especificado
 
-- **Dna.c**: Faz a duplicação de um DNA e imprime de forma colorida e visual
-- **Aminoacids.c**: Pega uma entrada de RNA mensageiro e imprime o aminoácido gerado
+```bash
+./LBP -i original.pgm -o output.pgm
+```
 
 <!--
 ## Licença
@@ -40,5 +31,3 @@ Licenciado sob a licença XXX. Veja o arquivo `LICENSE` para mais detalhes.
 <br />
 
 <p align="center">Criado com 💙 por <a href="https://github.com/tuildes">tuildes</a></p>
-
-[^1]: Faculdade de **Informática Biomédica** na Universidade Federal do Paraná no ano de 2024 (primeiro semestre), o curso se consiste em uma matriz de ciência da computação com matérias focadas as áreas biomédicas e aplicações da computação em áreas médicas, como genética.
