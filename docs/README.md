@@ -23,10 +23,33 @@ O projeto **LBP IMAGE COMPARISON** é um software feito na linguagem `Clang`, pr
 ./LBP -i original.pgm -o output.pgm
 ```
 
+### Modo 02 (comparação de imagens)
+
+* Compara uma imagem entrada com todas as imagens PGM dentro e retorna a mais parecida
+* **Entrada**: imagem.pgm e diretorio/
+* **Saida (STDIN)**: imgNear.pgm 134.670000
+
+```bash
+./LBP -i original.pgm -d images/
+```
+
+## 🚀 Arquivos
+    
+    src/            // Pasta da SOURCE e códigos do projeto
+    ├── auxiliar.c    // Funções auxiliares do projeto
+    ├── auxiliar.h    // Assinaturas das funções auxiliares
+    ├── lbp.c         // Funções de manipulação de PGM e LBP
+    ├── lbp.h         // Assinaturas das funções PGM e LBP
+    └── main.c        // Corpo do software + main()
+    makefile        // Arquivo MAKEFILE que gera o executável
+    README.md       // Este README com a descrição do projeto 
+
 <!--
 ## Licença
 Licenciado sob a licença XXX. Veja o arquivo `LICENSE` para mais detalhes.
 -->
+
+##
 
 <br />
 
