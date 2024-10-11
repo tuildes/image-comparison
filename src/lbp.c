@@ -238,7 +238,5 @@ unsigned int* histogram_file_to_vector(FILE *a) {
         return NULL;
     }
 
-    // printf("%hhu\n", v[1]);
-
     return v;
 }

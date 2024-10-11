@@ -14,7 +14,7 @@ O projeto **LBP IMAGE COMPARISON** é um software feito na linguagem `Clang`, pr
 
 * Feito por Gustavo Benitez Frehse
 * GRR20235087
-* Informaática Biomédica
+* Informática Biomédica
 
 ## Funcionalidades
 
@@ -39,6 +39,15 @@ O projeto **LBP IMAGE COMPARISON** é um software feito na linguagem `Clang`, pr
 ./LBP -i original.pgm -d images/
 ```
 
+## Compilação e execução
+```bash
+# Na raiz (compilar)
+makefile
+
+# Rodar software
+./LBP
+```
+
 ## 🚀 Arquivos
     
     src/            // Pasta da SOURCE e códigos do projeto
@@ -49,6 +58,45 @@ O projeto **LBP IMAGE COMPARISON** é um software feito na linguagem `Clang`, pr
     └── main.c        // Corpo do software + main()
     makefile        // Arquivo MAKEFILE que gera o executável
     README.md       // Este README com a descrição do projeto 
+
+
+**OBS**: Mais documentações e usos nas assinaturas das funções
+
+### Pasta src/ (detalhado)
+
+Pasta com todos os arquivos fontes: C e H
+
+### src/auxiliar.c & src/auxiliar.h
+
+Funções auxiliares do projeto de funções mais genpericas:
+* Calculo de distancia euclediana: euclidian_distance
+* Mostrar o manual de opções: options_manual
+* Destruir uma matrix: destroy_matrix
+* Preparar local (concatenar dir + arquivo): prepare_location_image
+
+### src/lbp.c & src/lbp.h
+
+Funções de manipulação de imagens PGM e arquivos LBP
+* Criar matriz com base em uma imagem PGM: pgm_image_to_matrix
+* Criar matriz LBP com base numa matriz: create_lbp_matrix
+* Criar arquivo PGM utilizando matriz LBP: create_pgm_image
+* Criar arquivo histograma LBP: create_histogram_archive
+* Verificar existencia de histrograma: verify_histogram_archive
+* Transformar histograma em um vetor: histogram_file_to_vector
+* Concatenar string + .lbp: concat_pgm
+
+### src/main.c
+
+Software propriamento dito que trata erros e escolhe dois modos de processamento descritos acima
+Além de chamar diversas das funções descritas acima e tratar diretórios.
+
+### Arquiivo makefile
+
+Arquivo base para faciltiar compilação e padronização
+
+### README.md
+
+Contém informações do projeto, tutorial e uma pequena documentação
 
 <!--
 ## Licença

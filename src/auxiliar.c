@@ -1,6 +1,8 @@
 #include "auxiliar.h"
 
 int options_manual() {
+    if (!PRINT_MANUAL_AND_ERROR) return EXIT_FAILURE;
+
     printf( "\e[0;97mManual of LBP IMAGE COMPARATION\e[0m\n"
             "\t-i [<image.pgm>]\tName of original archive (P2 or P5)\n"
             "\t-d [<directory>]\tDirectory with comparations images (P2 or P5)\n"
