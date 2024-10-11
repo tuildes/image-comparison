@@ -132,7 +132,6 @@ int main (int argc, char *argv[]) {
                 free(originalPath);
                 free(outputPath);
                 free(compDir);
-                free(d);
                 return EXIT_FAILURE; 
             } // Fazer frees aqui
 
@@ -151,7 +150,7 @@ int main (int argc, char *argv[]) {
                     free(originalPath);
                     free(outputPath);
                     free(compDir);
-                    free(d);
+                    // free(d);
                     return EXIT_FAILURE;
                 }
 
@@ -192,7 +191,7 @@ int main (int argc, char *argv[]) {
                             free(originalPath);
                             free(outputPath);
                             free(compDir);
-                            free(d);
+			    free(dir);
                             return EXIT_FAILURE;
                         }
 
@@ -218,6 +217,7 @@ int main (int argc, char *argv[]) {
                         destroy_matrix(result, height);
                         destroy_matrix(compMatrix, height);
                         fclose(comparisonImage);
+			free(dir);
                     }
 
                     // Arquivo de comparacao
@@ -239,12 +239,13 @@ int main (int argc, char *argv[]) {
                 }
             }
 
+	    free(dir);
+
             // Se existir, imprime a imagem mais similar
             if (mostNear != NULL)
                 printf("Imagem mais similar: %s %.06lf\n", mostNear, 
                                                     mostNearValue);
 
-            free(d);
             free(v1);
             free(originalLBPArchive);
             free(mostNear);
