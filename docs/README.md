@@ -10,6 +10,12 @@
 
 O projeto **LBP IMAGE COMPARISON** é um software feito na linguagem `Clang`, proposto para comparações entre um banco de dados PGM (P2 ou P5) e uma outra imagem PGM. Além de possibilitar também apenas a criação de uma imagem LBP utilizando o tratamento por LBP (Local Binary Pattern).
 
+## Sobre a entrega
+
+* Feito por Gustavo Benitez Frehse
+* GRR20235087
+* Informaática Biomédica
+
 ## Funcionalidades
 
 ### Modo 01 (criação de imagem por LBP)

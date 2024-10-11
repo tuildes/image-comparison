@@ -36,7 +36,7 @@ unsigned char** pgm_image_to_matrix(FILE *arc, size_t *width, size_t *height) {
     }
 
     if( (!*height) || (!width) || (!arc) || 
-        (*height < 3) || (*width < 3)) {
+        (*height < 3) || (*width < 3) || (!typeP[1])) {
         return NULL;
     }
 

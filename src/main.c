@@ -66,11 +66,22 @@ int main (int argc, char *argv[]) {
         // Modo de CRIACAO DE IMAGEM LBP
         // APENAS GERA A SAIDA
         case 1: {
-            FILE *lbpOutput = fopen(outputPath, "w");
-            unsigned char maxPixel;
 
             // Criar matriz base para conversoes
             old = pgm_image_to_matrix(original, &width, &height);
+
+            if(old == NULL) { // Erro ao criar imagem
+                fclose(original);
+                free(originalPath);
+                free(outputPath);
+                free(compDir);
+
+                destroy_matrix(old, height);
+                return EXIT_FAILURE; 
+            }
+
+            FILE *lbpOutput = fopen(outputPath, "w");
+            unsigned char maxPixel;
 
             if(lbpOutput == NULL) { // Erro ao criar arquivo DESTINO
                 printf("Não foi possível criar arquivo de saida (%s)\n", 
@@ -84,17 +95,6 @@ int main (int argc, char *argv[]) {
                 return EXIT_FAILURE;
             }
 
-            if(old == NULL) { // Erro ao criar imagem
-                fclose(lbpOutput);
-                fclose(original);
-                free(originalPath);
-                free(outputPath);
-                free(compDir);
-
-                destroy_matrix(old, height);
-                return EXIT_FAILURE; 
-            }
-
             // Cria a MATRIZ seguindo o LBP pela imagem OLD
             result = create_lbp_matrix(width, height, &maxPixel, result, old);
 
@@ -104,6 +104,7 @@ int main (int argc, char *argv[]) {
             // Destruir a matrix e fechar arquivo de output
             fclose(lbpOutput);
             destroy_matrix(result, height);
+            destroy_matrix(old, height);
             break;
         }
 
@@ -120,7 +121,6 @@ int main (int argc, char *argv[]) {
             if (d == NULL) { 
                 perror("Erro ao abrir diretorio");
 
-                destroy_matrix(old, height);
                 fclose(original);
                 free(originalPath);
                 free(outputPath);
@@ -133,15 +133,26 @@ int main (int argc, char *argv[]) {
             lbpArchive = concat_pgm(originalPath);
             // Verificar se existe o arquivo atual LBP
             if (verify_histogram_archive(originalPath)) {
-                printf("Falhou?");
 
                 // Criar matriz base para conversoes
                 old = pgm_image_to_matrix(original, &width, &height);
+
+                // Se em caso de ERRO retorna ERRO
+                if (old == NULL) {
+                    free(lbpArchive);
+                    fclose(original);
+                    free(originalPath);
+                    free(outputPath);
+                    free(compDir);
+                    free(d);
+                    return EXIT_FAILURE;
+                }
 
                 result = create_lbp_matrix(width, height, &maxPixel, result, old);
                 create_histogram_archive(width, height, result, lbpArchive);
 
                 destroy_matrix(result, height);
+                destroy_matrix(old, height);
             }
             // Arquivo de origem
             a = fopen(lbpArchive, "r");
@@ -173,6 +184,14 @@ int main (int argc, char *argv[]) {
 
                         compMatrix = pgm_image_to_matrix(originalComp, &width, &height);
 
+                        // Se a matriz der errado (continua)
+                        if (compMatrix == NULL) {
+                            fclose(originalComp);
+                            free(lbpArchiveComp);
+                            free(compArchive);
+                            continue;
+                        }
+
                         result = create_lbp_matrix(width, height, &maxPixel, result, compMatrix);
                         create_histogram_archive(width, height, result, lbpArchiveComp);
 
@@ -199,7 +218,8 @@ int main (int argc, char *argv[]) {
                 }
             }
 
-            printf("Imagem mais similar: %s %.06lf\n", mostNear, mostNearValue);
+            if (mostNear != NULL)
+                printf("Imagem mais similar: %s %.06lf\n", mostNear, mostNearValue);
 
             free(d);
             free(v1);
@@ -214,7 +234,6 @@ int main (int argc, char *argv[]) {
             options_manual();
     }
 
-    destroy_matrix(old, height);
     fclose(original);
     free(originalPath);
     free(outputPath);
