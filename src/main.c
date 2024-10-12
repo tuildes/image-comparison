@@ -152,7 +152,7 @@ int main (int argc, char *argv[]) {
                     free(originalPath);
                     free(outputPath);
                     free(compDir);
-                    // free(d);
+                    // closedir(d);
                     return EXIT_FAILURE;
                 }
 
@@ -173,7 +173,7 @@ int main (int argc, char *argv[]) {
             // Verifica se deu ERRO an criacao do arquivo
             if (v1 == NULL) {
                 fclose(a);
-                free(d);
+                closedir(d);
                 free(originalLBPArchive);
                 free(mostNear);
                 fclose(original);
@@ -184,7 +184,7 @@ int main (int argc, char *argv[]) {
             }
             if (a == NULL) {
                 free(v1);
-                free(d);
+                closedir(d);
                 free(originalLBPArchive);
                 free(mostNear);
                 fclose(original);
@@ -217,7 +217,6 @@ int main (int argc, char *argv[]) {
                             free(originalPath);
                             free(outputPath);
                             free(compDir);
-			    free(dir);
                             return EXIT_FAILURE;
                         }
 
@@ -242,8 +241,7 @@ int main (int argc, char *argv[]) {
                         // Destroi e limpa memoria
                         destroy_matrix(result, height);
                         destroy_matrix(compMatrix, height);
-                        fclose(comparisonImage);
-			free(dir);
+			fclose(comparisonImage);
                     }
 
                     // Arquivo de comparacao
@@ -253,7 +251,7 @@ int main (int argc, char *argv[]) {
                     // Verifica se deu ERRO an criacao do arquivo
                     if (v2 == NULL) {
                         fclose(a);
-                        free(d);
+                        closedir(d);
                         free(originalLBPArchive);
                         free(mostNear);
                         fclose(original);
@@ -269,7 +267,7 @@ int main (int argc, char *argv[]) {
                     }
                     if (b == NULL) {
                         free(v1);
-                        free(d);
+                        closedir(d);
                         fclose(a);
                         free(originalLBPArchive);
                         free(mostNear);
@@ -300,8 +298,6 @@ int main (int argc, char *argv[]) {
                 }
             }
 
-	    free(dir);
-
             // Se existir, imprime a imagem mais similar
             if (mostNear != NULL)
                 printf("Imagem mais similar: %s %.06lf\n", mostNear, 
@@ -310,7 +306,8 @@ int main (int argc, char *argv[]) {
             free(v1);
             free(originalLBPArchive);
             free(mostNear);
-            fclose(a);
+            closedir(d);
+	    fclose(a);
 
             break;
         }
