@@ -12,11 +12,9 @@
     @param (FILE) *arc - arquivo pgm com a imagem
     @param (size_t *) width - largura da imagem entrada (a ser modificado)
     @param (size_t *) height - altura da imagem entrada (a ser modificado)
-    @param (char *) type - tipo da imagem (2 ou 5)
     @returns (unsigned char**) matriz alocada com o arquivo PGM
-*/
-unsigned char** pgm_image_to_matrix(FILE *arc, size_t *width, size_t *height, 
-                                    char *type);
+*/ 
+unsigned char** pgm_image_to_matrix(FILE *arc, size_t *width, size_t *height);
 
 
 /*
@@ -28,7 +26,7 @@ unsigned char** pgm_image_to_matrix(FILE *arc, size_t *width, size_t *height,
     @param (unsigned char **) new - matriz nova a ser alocada e criada
     @param (unsigned char **) original - matriz original usada de base
     @returns @unsigned char **) matriz alocada com o LBP (**new)
-*/
+*/ 
 unsigned char** create_lbp_matrix(size_t width, size_t height, 
                                 unsigned char *max,
                                 unsigned char **new, 
@@ -42,10 +40,9 @@ unsigned char** create_lbp_matrix(size_t width, size_t height,
     @param (unsigned char) max - tom de preto maximo (a ser modificado)
     @param (unsigned char **) m - matriz usada para escrita cvom LBP
     @param (FILE *) pgm - arquivo a ser escrito
-    @param (char) type - tipo do arquivo ('2' ou '5')
 */ 
 void create_pgm_image(size_t width, size_t height, unsigned short int max, 
-                    unsigned char **m, FILE *pgm, char type);
+                    unsigned char **m, FILE *pgm);
 
 /*
     Recebe um arquivo do tipo PGM (P2 ou P5)
@@ -56,7 +53,7 @@ void create_pgm_image(size_t width, size_t height, unsigned short int max,
     @param (size_t *) row - largura da imagem entrada 
     @param (size_t *) column - altura da imagem entrada
     @param (unsigned char **) matrix - matriz a ser usada para criar LBP
-    @param (unsigned char *) name - nome do arquivo de histograma
+    @param (unsigned char*) name - nome do arquivo de histograma
     @returns (int) - status do pedido (0 para sucesso)
 */ 
 int create_histogram_archive(size_t row, size_t column, 
@@ -65,7 +62,7 @@ int create_histogram_archive(size_t row, size_t column,
 /*
     Verifica se existe um arquivo LBP de certo arquivo
 
-    @param (char*) name - nome do arquivo para verificar 
+    @param (unsigned char*) name - nome do arquivo para verificar 
     @param (int) 1 para nao existe e 0 para existe
 */ 
 int verify_histogram_archive(char *name);
@@ -76,7 +73,7 @@ int verify_histogram_archive(char *name);
     @param (FILE) *a - arquivo de histograma (LBP)
     @return (unsigned int *) - vetor alocado
 */ 
-double* histogram_file_to_vector(FILE *a);
+unsigned int* histogram_file_to_vector(FILE *a);
 
 /*
     Concatena um texto com .lbp no fim

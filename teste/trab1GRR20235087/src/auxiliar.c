@@ -3,18 +3,17 @@
 int options_manual() {
     if (!PRINT_MANUAL_AND_ERROR) return EXIT_FAILURE;
 
-    printf("\033[0;97mManual of LBP IMAGE COMPARISON\033[0m\n"
-        "\t-i [<image.pgm>]\tName of original archive (P2 or P5)\n"
-        "\t-d [<directory>]\tDirectory with comparison images (P2 or P5)\n"
-        "\t-o [<image.pgm>]\tName of result LBP archive (P5)\n\n"
-        "\033[0;97mExamples of entry:\033[0m\n"
-        "\t./LBP -i archive.pgm -d inputs/\n"
-        "\t./LBP -i archive.pgm -o result.pgm\n");
-
+    printf( "\e[0;97mManual of LBP IMAGE COMPARATION\e[0m\n"
+            "\t-i [<image.pgm>]\tName of original archive (P2 or P5)\n"
+            "\t-d [<directory>]\tDirectory with comparations images (P2 or P5)\n"
+            "\t-o [<image.pgm>]\ttName of result LBP archive (P5)\n\n"
+            "\e[0;97mExamples of entry:\e[0m\n"
+            "\t./LBP -i archive.pgm -d inputs/\n"
+            "\t./LBP -i archive.pgm -o result.pgm\n");
     return EXIT_FAILURE;
 }
 
-double euclidian_distance(double *v1, double *v2) {
+double euclidian_distance(unsigned int *v1, unsigned int *v2) {
     double res = 0;
     for (size_t i = 0; i < 255; i++) {
         res += ((*v1 - *v2) * (*v1 - *v2));
