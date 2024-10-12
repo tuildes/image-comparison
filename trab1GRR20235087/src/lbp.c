@@ -1,6 +1,13 @@
 #include "lbp.h"
 
-unsigned char** pgm_image_to_matrix(FILE *arc, size_t *width, size_t *height) {
+unsigned char** __blank_matrix(size_t width, size_t height);
+unsigned char __local_binnary_pattern(size_t row, size_t column, 
+                                    unsigned char **matrix);
+double* __create_histogram_lbp(size_t row, size_t column,
+                                    unsigned char **matrix);
+
+unsigned char** pgm_image_to_matrix(FILE *arc, size_t *width, size_t *height, 
+                                    char *type) {
 
     unsigned char** m; // Matriz a ser retornada
     char *res;
@@ -46,6 +53,8 @@ unsigned char** pgm_image_to_matrix(FILE *arc, size_t *width, size_t *height) {
     for(size_t i = 0; i < (*height); i++)
         m[i] = (unsigned char*) malloc (sizeof(unsigned char) * (*width));
 
+    *type = typeP[1]; // Armazena o tipo
+
     // P2 FORMAT
     if (typeP[1] == '2') {
         for(size_t i = 0; i < (*height); i++) {
@@ -87,15 +96,15 @@ unsigned char __local_binnary_pattern(size_t row, size_t column,
                                     unsigned char **matrix) {
 
     unsigned char res = 0, factor = 1;
-    
+
     for(size_t i = 0; i <= 2; i++) {
         for(size_t j = 0; j <= 2; j++) {
             // Ignorar o numero que estamos analisando
             if ((i == 1) && (j == 1)) continue;
 
             if (matrix[(column + i)][(row + j)] >= matrix[(column + 1)][(row + 1)])
-                res += factor;
-            factor = factor << 1; // Multiplicacao por dois
+                res = (unsigned char)(res + factor);
+            factor = (unsigned char)(factor << 1); // Multiplicacao por dois
         }
     }
     
@@ -128,28 +137,37 @@ unsigned char** create_lbp_matrix(size_t width, size_t height,
 
 // Escreve no arquivo PGM (P5)
 void create_pgm_image(size_t width, size_t height, unsigned short int max, 
-                    unsigned char **m, FILE *pgm) {
+                    unsigned char **m, FILE *pgm, char type) {
 
-    fprintf(pgm, "P5\n%lu %lu\n%hu\n", width, height, max);
+    if ((type != '5') && (type != '2')) return; // Nao faz nada em ERRO
 
-    // Colocar a matriz no arquivo
-    for(size_t i = 0; i < height; i++)
-        fwrite(m[i], 1, width, pgm);
+    fprintf(pgm, "P%c\n%lu %lu\n%hu\n", type, (width - 1), (height - 1), max);
+
+    if (type == '5') {
+        m++;
+        for(size_t i = 1; i < (height - 1); i++)
+            fwrite(m[i], 1, (width - 1), pgm);
+        return;
+    }
+
+    for(size_t i = 1; i < (height - 1); i++)
+        for(size_t j = 1; j < (width -1); j++)
+            fprintf(pgm, "%hhu ", m[i][j]);
 
     return;
 }
 
 // ERRO => INTEIROS
-unsigned int* __create_histogram_lbp(size_t row, size_t column,
+double* __create_histogram_lbp(size_t row, size_t column,
                                     unsigned char **matrix) {
 
-    unsigned int *h;
+    double *h;
 
-    if ((h = (unsigned int *)calloc(256, sizeof(unsigned int))) == NULL)
+    if ((h = (double *)calloc(256, sizeof(double))) == NULL)
         return NULL;
 
-    for(size_t j = 0; j < row; j++)
-        for(size_t i = 0; i < column; i++)
+    for(size_t j = 1; j < (row - 1); j++)
+        for(size_t i = 1; i < (column - 1); i++)
             h[matrix[i][j]]++;
 
     return h;
@@ -159,24 +177,24 @@ int create_histogram_archive(size_t row, size_t column,
                             unsigned char **matrix, char *name) {
 
     FILE *histogram;
-    unsigned int *h;
+    double *h;
 
     histogram = fopen(name, "w");
     h = __create_histogram_lbp(row, column, matrix);
 
     // Tratamentos de erros
     if (histogram == NULL) {
-        perror("Erro ao criar arquivo LBP");
+        // perror("Erro ao criar arquivo LBP");
         return 1;
     }
 
     if (h == NULL) {
-        printf("Erro ao criar vetor de histograma\n");
+        // printf("Erro ao criar vetor de histograma\n");
         return 1;
     }
 
     // Escrever no arquivo LBP (BINARIO)
-    fwrite(h, sizeof(unsigned int), 256, histogram);
+    fwrite(h, sizeof(double), 256, histogram);
 
     fclose(histogram);
     free(h);
@@ -222,16 +240,16 @@ char* concat_pgm(char *name) {
     return aux;
 }
 
-unsigned int* histogram_file_to_vector(FILE *a) {
+double* histogram_file_to_vector(FILE *a) {
     fseek(a, 0, SEEK_SET);
 
-    unsigned int *v;
+    double *v;
 
-    if ((v = (unsigned int *)calloc(256, sizeof(unsigned int))) == NULL)
+    if ((v = (double *)calloc(256, sizeof(double))) == NULL)
         return NULL;
 
     // Verificar se os binarios estao certos
-    size_t bytes = fread(v, sizeof(unsigned int), 256, a);
+    size_t bytes = fread(v, sizeof(double), 256, a);
 
     if (bytes < 256) {
         free(v);

@@ -17,18 +17,18 @@
     Faz e retorna a distancia euclediana entre dois vetores
     Considera que ambos vetores vao de [0..255] de tamanho
 
-    @param (unsigned int *v1) primeiro vetor
-    @param (unsigned int *v2) segundo vetor
+    @param (double *v1) primeiro vetor
+    @param (double *v2) segundo vetor
     @returns (double) distancia euclediana entre dois vetores
 */ 
-double euclidian_distance(unsigned int *v1, unsigned int *v2);
+double euclidian_distance(double *v1, double *v2);
 
 
 /*
     Imprime o manual de OPCOES do software
 
     @returns (int) sempre 1
-*/ 
+*/
 int options_manual();
 
 /*

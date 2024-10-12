@@ -21,7 +21,7 @@ int main (int argc, char *argv[]) {
     }
 
     // Tratar entradas
-    while ((option = getopt(argc, argv, "i:o:d:")) != -1) {
+    while ((option = (char)getopt(argc, argv, "i:o:d:")) != -1) {
         switch (option) {
             case 'i': // Tipo input
                 originalPath = strdup(optarg);
@@ -35,7 +35,7 @@ int main (int argc, char *argv[]) {
                 mode = 2; // Modo de comparacao
                 break;
             default: // Entradas erradas
-                printf("\n");
+                // printf("\n");
                 options_manual();
                 return EXIT_FAILURE;
         }
@@ -55,9 +55,9 @@ int main (int argc, char *argv[]) {
 
     // Erro ao abrir arquivo de entrada (INPUT)
     if(original == NULL) {
-        printf("Não foi possível abrir arquivo de entrada (%s)\n", 
-                                                    originalPath);
-        perror("Erro");
+        // printf("Não foi possível abrir arquivo de entrada (%s)\n", 
+        //                                            originalPath);
+        // perror("Erro");
         free(originalPath);
         free(outputPath);
         free(compDir);
@@ -69,11 +69,11 @@ int main (int argc, char *argv[]) {
         // Modo de CRIACAO DE IMAGEM LBP
         // APENAS GERA A SAIDA
         case 1: {
-
+            char type;
             unsigned char maxPixel; // Valor maximo de TOM DE PRETO
 
             // Criar matriz base para conversoes
-            old = pgm_image_to_matrix(original, &width, &height);
+            old = pgm_image_to_matrix(original, &width, &height, &type);
 
             if(old == NULL) { // Erro ao matriz de imagem
                 fclose(original);
@@ -88,9 +88,9 @@ int main (int argc, char *argv[]) {
             // Abertura de arquivo de saida
             FILE *lbpOutput = fopen(outputPath, "w");
             if(lbpOutput == NULL) { // Erro ao criar arquivo DESTINO
-                printf("Não foi possível criar arquivo de saida (%s)\n", 
-                        outputPath);
-                perror("Erro");
+                // printf("Não foi possível criar arquivo de saida (%s)\n", 
+                //        outputPath);
+                // perror("Erro");
                 destroy_matrix(old, height);
                 fclose(original);
                 free(originalPath);
@@ -102,7 +102,7 @@ int main (int argc, char *argv[]) {
             // Cria a MATRIZ seguindo o LBP pela imagem OLD
             result = create_lbp_matrix(width, height, &maxPixel, result, old);
             // Cria o arquivo com base na MATRIZ LBP
-            create_pgm_image(width, height, maxPixel, result, lbpOutput);
+            create_pgm_image(width, height, maxPixel, result, lbpOutput, type);
 
             // Destruir a matrix e fechar arquivo de output
             fclose(lbpOutput);
@@ -111,6 +111,7 @@ int main (int argc, char *argv[]) {
             break;
         }
 
+        // Caso de comparacao de imagens
         case 2: {
             char *originalLBPArchive, // Arquivo LBP original (base)
                 *comparisonLBPArchive, // Arquivo LBP de comparacao (dir)
@@ -121,18 +122,18 @@ int main (int argc, char *argv[]) {
             unsigned char maxPixel, // Valor maximo de TOM de PRETO
                         **compMatrix; // Matriz para criacao de vetor LBP
             FILE *a, *b, *comparisonImage;
-            unsigned int *v1, *v2; // Vetores de comparacao
+            double *v1, *v2; // Vetores de comparacao
+            char type; // Tipo da imagem
 
             // Ler arquivos do diretorio
             DIR *d = opendir(compDir);
             if (d == NULL) { 
-                perror("Erro ao abrir diretorio");
+                // perror("Erro ao abrir diretorio");
 
                 fclose(original);
                 free(originalPath);
                 free(outputPath);
                 free(compDir);
-                free(d);
                 return EXIT_FAILURE; 
             } // Fazer frees aqui
 
@@ -142,7 +143,7 @@ int main (int argc, char *argv[]) {
             if (verify_histogram_archive(originalPath)) {
 
                 // Criar matriz base para conversoes
-                old = pgm_image_to_matrix(original, &width, &height);
+                old = pgm_image_to_matrix(original, &width, &height, &type);
 
                 // Se em caso de ERRO retorna ERRO
                 if (old == NULL) {
@@ -151,7 +152,7 @@ int main (int argc, char *argv[]) {
                     free(originalPath);
                     free(outputPath);
                     free(compDir);
-                    free(d);
+                    // closedir(d);
                     return EXIT_FAILURE;
                 }
 
@@ -168,6 +169,30 @@ int main (int argc, char *argv[]) {
             // Arquivo de origem
             a = fopen(originalLBPArchive, "r");
             v1 = histogram_file_to_vector(a);
+
+            // Verifica se deu ERRO an criacao do arquivo
+            if (v1 == NULL) {
+                fclose(a);
+                closedir(d);
+                free(originalLBPArchive);
+                free(mostNear);
+                fclose(original);
+                free(originalPath);
+                free(outputPath);
+                free(compDir);
+                return EXIT_FAILURE;
+            }
+            if (a == NULL) {
+                free(v1);
+                closedir(d);
+                free(originalLBPArchive);
+                free(mostNear);
+                fclose(original);
+                free(originalPath);
+                free(outputPath);
+                free(compDir);
+                return EXIT_FAILURE;
+            }
 
             while((dir = readdir(d)) != NULL) {
                 if (dir->d_type == DT_REG) {                    
@@ -192,13 +217,12 @@ int main (int argc, char *argv[]) {
                             free(originalPath);
                             free(outputPath);
                             free(compDir);
-                            free(d);
                             return EXIT_FAILURE;
                         }
 
                         // Prepara a matriz base
                         compMatrix = pgm_image_to_matrix(comparisonImage, 
-                                                        &width, &height);
+                                                    &width, &height, &type);
 
                         // Se a matriz der errado (continua)
                         if (compMatrix == NULL) {
@@ -217,12 +241,47 @@ int main (int argc, char *argv[]) {
                         // Destroi e limpa memoria
                         destroy_matrix(result, height);
                         destroy_matrix(compMatrix, height);
-                        fclose(comparisonImage);
+			            fclose(comparisonImage);
                     }
 
                     // Arquivo de comparacao
                     b = fopen(comparisonLBPArchive, "r");
                     v2 = histogram_file_to_vector(b);
+
+                    // Verifica se deu ERRO an criacao do arquivo
+                    if (v2 == NULL) {
+                        fclose(a);
+                        closedir(d);
+                        free(originalLBPArchive);
+                        free(mostNear);
+                        fclose(original);
+                        free(originalPath);
+                        free(outputPath);
+                        free(compDir);
+                        free(v1);
+                        free(v2);
+                        free(comparisonLBPArchive);
+                        free(comparisonDirLBP);
+                        fclose(b);
+                        return EXIT_FAILURE;
+                    }
+                    if (b == NULL) {
+                        free(v1);
+                        closedir(d);
+                        fclose(a);
+                        free(originalLBPArchive);
+                        free(mostNear);
+                        fclose(original);
+                        free(originalPath);
+                        free(outputPath);
+                        free(compDir);
+
+                        free(v2);
+                        free(comparisonLBPArchive);
+                        free(comparisonDirLBP);
+                        fclose(b);
+                        return EXIT_FAILURE;
+                    }
 
                     // Verifica a distancia das imagens e guarda a mais proxima
                     temp = euclidian_distance(v1, v2);
@@ -244,11 +303,11 @@ int main (int argc, char *argv[]) {
                 printf("Imagem mais similar: %s %.06lf\n", mostNear, 
                                                     mostNearValue);
 
-            free(d);
             free(v1);
             free(originalLBPArchive);
             free(mostNear);
-            fclose(a);
+            closedir(d);
+	        fclose(a);
 
             break;
         }

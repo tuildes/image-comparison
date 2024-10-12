@@ -5,7 +5,7 @@ SOURCE	= src/lbp.c src/main.c src/auxiliar.c
 HEADER	= src/lbp.h src/auxiliar.h
 OUT	= LBP
 CC	 = gcc
-FLAGS	 = -g -c -Wall -Wextra -Werror
+FLAGS	 = -g -c -Wall -Wextra -Werror -Wpedantic -Walloc-zero -Wconversion -Wduplicated-branches -Wduplicated-cond -Wformat=2 -Wshadow
 LFLAGS	 = -lm
 
 all: LBP
