@@ -241,7 +241,7 @@ int main (int argc, char *argv[]) {
                         // Destroi e limpa memoria
                         destroy_matrix(result, height);
                         destroy_matrix(compMatrix, height);
-			fclose(comparisonImage);
+			            fclose(comparisonImage);
                     }
 
                     // Arquivo de comparacao
@@ -307,7 +307,7 @@ int main (int argc, char *argv[]) {
             free(originalLBPArchive);
             free(mostNear);
             closedir(d);
-	    fclose(a);
+	        fclose(a);
 
             break;
         }
