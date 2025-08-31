@@ -1,12 +1,12 @@
 #include "lbp.h"
 
 unsigned char** __blank_matrix(size_t width, size_t height);
-unsigned char __local_binnary_pattern(size_t row, size_t column, 
+unsigned char __local_binnary_pattern(size_t row, size_t column,
                                     unsigned char **matrix);
 double* __create_histogram_lbp(size_t row, size_t column,
                                     unsigned char **matrix);
 
-unsigned char** pgm_image_to_matrix(FILE *arc, size_t *width, size_t *height, 
+unsigned char** pgm_image_to_matrix(FILE *arc, size_t *width, size_t *height,
                                     char *type) {
 
     unsigned char** m; // Matriz a ser retornada
@@ -23,26 +23,26 @@ unsigned char** pgm_image_to_matrix(FILE *arc, size_t *width, size_t *height,
         counter++;
         // Fazer a leitura de TIPO, LARGURA, ALTURA e VALOR MAXIMO
         switch(counter) {
-            case 1: { 
+            case 1: {
                 if (!sscanf(line, "%s", typeP))
                     return NULL;
-                break;  
+                break;
             }
-            case 2: { 
+            case 2: {
                 if (!sscanf(line, "%lu %lu", width, height))
                     return NULL;
-                break; 
+                break;
             }
-            case 3: { 
+            case 3: {
                 if (!sscanf(line, "%hu", &max))
                     return NULL;
-                break; 
+                break;
             }
             default: break;
         }
     }
 
-    if( (!*height) || (!width) || (!arc) || 
+    if( (!*height) || (!width) || (!arc) ||
         (*height < 3) || (*width < 3) || (!typeP[1])) {
         return NULL;
     }
@@ -69,9 +69,9 @@ unsigned char** pgm_image_to_matrix(FILE *arc, size_t *width, size_t *height,
         for(size_t i = 0; i < (*height); i++) fread(m[i], sizeof(unsigned char), (*width), arc);
 
     } else { // Caso FALHA (fallback)
-        for(size_t i = 0; i < (*height); i++) { 
-            free(m[i]); 
-            return NULL; 
+        for(size_t i = 0; i < (*height); i++) {
+            free(m[i]);
+            return NULL;
         }
     }
 
@@ -86,13 +86,13 @@ unsigned char** __blank_matrix(size_t width, size_t height) {
     m = (unsigned char **) malloc (sizeof(unsigned char *) * height);
 
     for(size_t i = 0; i < height; i++)
-        m[i] = (unsigned char*) calloc (width, sizeof(unsigned char)); 
+        m[i] = (unsigned char*) calloc (width, sizeof(unsigned char));
 
     return m;
 }
 
 // Encontra o valor unitario da LBP com base da matriz dada
-unsigned char __local_binnary_pattern(size_t row, size_t column, 
+unsigned char __local_binnary_pattern(size_t row, size_t column,
                                     unsigned char **matrix) {
 
     unsigned char res = 0, factor = 1;
@@ -107,15 +107,15 @@ unsigned char __local_binnary_pattern(size_t row, size_t column,
             factor = (unsigned char)(factor << 1); // Multiplicacao por dois
         }
     }
-    
+
     return res;
 }
 
-unsigned char** create_lbp_matrix(size_t width, size_t height, 
+unsigned char** create_lbp_matrix(size_t width, size_t height,
                                 unsigned char *max,
-                                unsigned char **new, 
+                                unsigned char **new,
                                 unsigned char **original) {
-    
+
     // Casos de ERRO (impossivel iterar)
     if ((width < 3) || (height < 3) || (original == NULL))
         return NULL;
@@ -136,17 +136,17 @@ unsigned char** create_lbp_matrix(size_t width, size_t height,
 
 
 // Escreve no arquivo PGM (P5)
-void create_pgm_image(size_t width, size_t height, unsigned short int max, 
+void create_pgm_image(size_t width, size_t height, unsigned short int max,
                     unsigned char **m, FILE *pgm, char type) {
 
     if ((type != '5') && (type != '2')) return; // Nao faz nada em ERRO
 
-    fprintf(pgm, "P%c\n%lu %lu\n%hu\n", type, (width - 1), (height - 1), max);
+    fprintf(pgm, "P%c\n%lu %lu\n%hu\n", type, (width - 2), (height - 2), max);
 
     if (type == '5') {
         m++;
         for(size_t i = 1; i < (height - 1); i++)
-            fwrite(m[i], 1, (width - 1), pgm);
+            fwrite(m[i], 1, (width - 2), pgm);
         return;
     }
 
@@ -173,7 +173,7 @@ double* __create_histogram_lbp(size_t row, size_t column,
     return h;
 }
 
-int create_histogram_archive(size_t row, size_t column, 
+int create_histogram_archive(size_t row, size_t column,
                             unsigned char **matrix, char *name) {
 
     FILE *histogram;
@@ -231,9 +231,9 @@ char* concat_pgm(char *name) {
 
     if (dot == 0) return NULL;
 
-    if ((aux = (char *)malloc(sizeof(char) * (strlen(name) + 5))) == NULL) 
+    if ((aux = (char *)malloc(sizeof(char) * (strlen(name) + 5))) == NULL)
         return NULL; // ERRO
-    
+
     strcpy(aux, name);
     aux[dot] = '\0';
     strcat(aux, ".lbp");
