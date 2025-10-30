@@ -1,110 +1,102 @@
 <!-- HEADER -->
 <p align="center">
-  <img alt="Image in picture" src="https://raw.githubusercontent.com/tabler/tabler-icons/8d4f23166d708b42bacc5ce4bc73d72ba296057b/icons/outline/image-in-picture.svg" height="120">
-  <h3 align="center">LBP Image Comparison</h3>
-  <p align="center">Algoritmo de geração imagem e comparação de PGM usando LBP</p>
+<h3 align="center">LBP Image Comparison</h3>
+
+<p align="center">Image generation and PGM comparison algorithm using LBP</p>
 </p>
 <!-- HEADER -->
 
-## Sobre
+## About
 
-O projeto **LBP IMAGE COMPARISON** é um software feito na linguagem `Clang`, proposto para comparações entre um banco de dados PGM (P2 ou P5) e uma outra imagem PGM. Além de possibilitar também apenas a criação de uma imagem LBP utilizando o tratamento por LBP (Local Binary Pattern).
+The **LBP IMAGE COMPARISON** project is a software written in the `Clang` language, designed for comparisons between a PGM database (P2 or P5) and another PGM image. It also allows for the creation of an LBP image using LBP (Local Binary Pattern) processing.
 
-## Sobre a entrega
+## Functionalities
 
-* Feito por Gustavo Benitez Frehse
-* GRR20235087
-* Informática Biomédica
+### Mode 01 (LBP image creation)
 
-## Funcionalidades
-
-### Modo 01 (criação de imagem por LBP)
-
-* Com base numa imagem PGM original, o algoritmo cria um segundo arquivo PGM ao tratar o arquivo original utilizando LBP
-* **Entrada**: imagem.pgm base
-* **Saída (STDIN)**: nenhuma
-* **Saída**: criação de um arquivo output.pgm com nome especificado
+* Based on an original PGM image, the algorithm creates a second PGM file by processing the original file using LBP
+* **Input**: base image.pgm
+* **Output (STDIN)**: none
+* **Output**: creation of an output.pgm file with the specified name
 
 ```bash
 ./LBP -i original.pgm -o output.pgm
+
 ```
 
-### Modo 02 (comparação de imagens)
+### Mode 02 (image comparison)
 
-* Compara uma imagem entrada com todas as imagens PGM dentro e retorna a mais parecida
-* **Entrada**: imagem.pgm e diretorio/
-* **Saida (STDIN)**: imgNear.pgm 134.670000
+* Compares an input image with all PGM images within and returns the most similar one
+* **Input**: image.pgm and directory/
+* **Output (STDIN)**: imgNear.pgm 134.670000
 
 ```bash
 ./LBP -i original.pgm -d images/
 ```
 
-## Compilação e execução
+## Compilation and execution
 ```bash
-# Na raiz (compilar)
+# In the root (compile)
 makefile
 
-# Rodar software
+# Run software
 ./LBP
 ```
 
-## 🚀 Arquivos
-    
-    src/            // Pasta da SOURCE e códigos do projeto
-    ├── auxiliar.c    // Funções auxiliares do projeto
-    ├── auxiliar.h    // Assinaturas das funções auxiliares
-    ├── lbp.c         // Funções de manipulação de PGM e LBP
-    ├── lbp.h         // Assinaturas das funções PGM e LBP
-    └── main.c        // Corpo do software + main()
-    makefile        // Arquivo MAKEFILE que gera o executável
-    README.md       // Este README com a descrição do projeto 
+## 🚀 Files
 
+```
+  src/             // Project SOURCE folder and code
+  ├── auxiliary.c  // Auxiliary project functions
+  ├── auxiliary.h  // Signatures of auxiliary functions
+  ├── lbp.c        // PGM and LBP manipulation functions
+  ├── lbp.h        // Signatures of PGM and LBP functions
+  └── main.c       // Software body + main()
+  
+  makefile         // MAKEFILE file that generates the executable
+  README.md        // This README contains the project description.
+```
 
-**OBS**: Mais documentações e usos nas assinaturas das funções
+**NOTE**: More documentation and usage in the function signatures.
 
-### Pasta src/ (detalhado)
+### src/ folder (detailed)
 
-Pasta com todos os arquivos fontes: C e H
+Folder with all source files: C and H
 
 ### src/auxiliar.c & src/auxiliar.h
 
-Funções auxiliares do projeto de funções mais genpericas:
-* Calculo de distancia euclediana: euclidian_distance
-* Mostrar o manual de opções: options_manual
-* Destruir uma matrix: destroy_matrix
-* Preparar local (concatenar dir + arquivo): prepare_location_image
+Auxiliary functions for the project with more generic functions:
+
+* Euclidean distance calculation: euclidian_distance
+* Show options manual: options_manual
+* Destroy a matrix: destroy_matrix
+* Prepare location (concatenate dir + file): prepare_location_image
 
 ### src/lbp.c & src/lbp.h
 
-Funções de manipulação de imagens PGM e arquivos LBP
-* Criar matriz com base em uma imagem PGM: pgm_image_to_matrix
-* Criar matriz LBP com base numa matriz: create_lbp_matrix
-* Criar arquivo PGM utilizando matriz LBP: create_pgm_image
-* Criar arquivo histograma LBP: create_histogram_archive
-* Verificar existencia de histrograma: verify_histogram_archive
-* Transformar histograma em um vetor: histogram_file_to_vector
-* Concatenar string + .lbp: concat_pgm
+Functions for manipulating PGM images and LBP files:
+* Create matrix based on a PGM image: pgm_image_to_matrix
+* Create LBP matrix based on a matrix: create_lbp_matrix
+* Create PGM file using LBP matrix: create_pgm_image
+* Create LBP histogram file: create_histogram_archive
+* Verify histogram existence: verify_histogram_archive
+* Transform histogram into a vector: histogram_file_to_vector
+* Concatenate string + .lbp: concat_pgm
 
 ### src/main.c
 
-Software propriamento dito que trata erros e escolhe dois modos de processamento descritos acima
-Além de chamar diversas das funções descritas acima e tratar diretórios.
+Software that handles errors and chooses two processing modes described above. In addition to calling several of the functions described above and handling directories.
 
-### Arquiivo makefile
+### Makefile
 
-Arquivo base para faciltiar compilação e padronização
+Base file to facilitate compilation and standardization
 
 ### README.md
 
-Contém informações do projeto, tutorial e uma pequena documentação
-
-<!--
-## Licença
-Licenciado sob a licença XXX. Veja o arquivo `LICENSE` para mais detalhes.
--->
+Contains project information, tutorial, and a small documentation
 
 ##
 
 <br />
 
-<p align="center">Criado com 💙 por <a href="https://github.com/tuildes">tuildes</a></p>
+<p align="center">Created with 💙 by <a href="https://github.com/tuildes">tuildes</a></p>
