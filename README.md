@@ -8,7 +8,7 @@
 
 ## About
 
-The **LBP IMAGE COMPARISON** project is a software written in the `Clang` language, designed for comparisons between a PGM database (P2 or P5) and another PGM image. It also allows for the creation of an LBP image using LBP (Local Binary Pattern) processing.
+The **LBP IMAGE COMPARISON** project is a software written in the `C` language, designed for comparisons between a PGM database (P2 or P5) and another PGM image. It also allows for the creation of an LBP image using LBP (Local Binary Pattern) processing.
 
 ## Functionalities
 
