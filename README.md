@@ -90,13 +90,3 @@ Software that handles errors and chooses two processing modes described above. I
 ### Makefile
 
 Base file to facilitate compilation and standardization
-
-### README.md
-
-Contains project information, tutorial, and a small documentation
-
-##
-
-<br />
-
-<p align="center">Created with 💙 by <a href="https://github.com/tuildes">tuildes</a></p>
